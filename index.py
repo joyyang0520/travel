@@ -2,7 +2,7 @@ from flask import Flask
 app = Flask(__name__)
 import openai
 import os
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("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")
 @app.route("/")
 def index():
     response = openai.Completion.create(
