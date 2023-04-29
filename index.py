@@ -9,8 +9,12 @@ def webhook():
     req = request.get_json(force=True)
     # fetch queryResult from json
     action =  req.get("queryResult").get("action")
-    msg =  req.get("queryResult").get("queryText")
-    info = "動作：" + action + "； 查詢地區：" + msg
+    #msg =  req.get("queryResult").get("queryText")
+    #info = "動作：" + action + "； 查詢地區：" + msg
+    if (action == "areaChoice"):
+        rate =  req.get("queryResult").get("parameters").get("area")
+        info = "您選擇的旅遊區域是：" + rate
+
     return make_response(jsonify({"fulfillmentText": info}))
 
 if __name__ == "__main__":
