@@ -9,7 +9,7 @@ def webhook():
     req = request.get_json(force=True)
     # fetch queryResult from json
     action =  req.get("queryResult").get("action")
-    if (action == "Choice"):
+    if (action == "areaChoice"):
         rate =  req.get("queryResult").get("parameters").get("area")
         info = "您選擇的區域是：" + area
 
