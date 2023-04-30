@@ -12,7 +12,7 @@ def webhook():
     #msg =  req.get("queryResult").get("queryText")
     #info = "動作：" + action + "； 查詢地區：" + msg
     if (action == "areaChoice"):
-        rate =  req.get("queryResult").get("parameters").get("area")
+        area =  req.get("queryResult").get("parameters").get("area")
         info = "您選擇的旅遊區域是：" + area
 
     return make_response(jsonify({"fulfillmentText": info}))
