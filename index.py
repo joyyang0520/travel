@@ -13,11 +13,10 @@ def webhook():
     if (action == "areaChoice"):
         area =  req.get("queryResult").get("parameters").get("area")
         info = "您選擇的旅遊區域是：" + area
-        info = "接下來請選擇" + area + "想去旅遊的縣市"
 
     if (action == "cityChoice"):
         area =  req.get("queryResult").get("parameters").get("city")
-        info = "您所選擇的城市是：" + city
+        info = "您所選擇的旅是：" + city
 
     return make_response(jsonify({"fulfillmentText": info}))
 
