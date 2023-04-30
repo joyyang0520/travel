@@ -14,7 +14,7 @@ def webhook():
         area =  req.get("queryResult").get("parameters").get("area")
         info = "您選擇的旅遊區域是：" + area
 
-    if (action == "cityChoice"):
+    elif (action == "cityChoice"):
         area =  req.get("queryResult").get("parameters").get("city")
         info = "您所選擇的旅是：" + city
 
