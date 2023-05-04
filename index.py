@@ -19,11 +19,9 @@ def webhook():
         city =  req.get("queryResult").get("parameters").get("city")
         info = "您所選擇的旅遊地區是：" + city
 
-    return make_response(jsonify({"fulfillmentText": info}))
+#def get_link():
 
-def get_link():
-
-    db = firestore.client()
+    #db = firestore.client()
 
     collection_ref = db.collection("台中")
     #view = "高美濕地"
@@ -38,7 +36,9 @@ def get_link():
         print("開放時間：" + result.get("time"))
         print("票價：" + result.get("ticket"))
 
-get_link()
+#get_link()
+
+    return make_response(jsonify({"fulfillmentText": info}))
 
 if __name__ == "__main__":
     app.run()
