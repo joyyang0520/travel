@@ -19,7 +19,7 @@ def webhook():
         city =  req.get("queryResult").get("parameters").get("city")
         info = "您所選擇的旅遊地區是：" + city 
 
-    def get_link():
+    def get_link(https://console.firebase.google.com/u/2/project/travel-bc3b6/firestore/data/):
 
         db = firestore.client()
 
