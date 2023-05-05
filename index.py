@@ -27,11 +27,11 @@ def webhook():
     for doc in docs:
         result = doc.to_dict()
         if view in result.get("view"):
-            msg += "景點：" + result.get("view") + "<br>"
-            msg += "景點介紹：" + result.get("introduction") + "<br>"
-            msg += "地址：" + result.get("address") + "<br>"
-            msg += "開放時間：" + result.get("time") + "<br>"
-            msg += "票價：" + result.get("ticket") + "<br><br>"
+            msg += "景點：" + result.get("view") <br>
+            msg += "景點介紹：" + result.get("introduction") <br>
+            msg += "地址：" + result.get("address") <br>
+            msg += "開放時間：" + result.get("time") <br>
+            msg += "票價：" + result.get("ticket") <br><br>
     msg = info + "<br>" + msg
     return make_response(jsonify({"fulfillmentText": msg}))
 
