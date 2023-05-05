@@ -8,8 +8,8 @@ firebase_admin.initialize_app(cred)
 from flask import Flask, request, make_response, jsonify
 app = Flask(__name__)
 
-@app.route("/")
-def index():
+@app.route("/webhook", methods=["POST"])
+def webhook():
     req = request.get_json(force=True)
     #action =  req.get("queryResult").get("action")
     msg =  req.get("queryResult").get("queryText")
