@@ -12,13 +12,14 @@ app = Flask(__name__)
 def webhook():
     req = request.get_json(force=True)
     #action =  req.get("queryResult").get("action")
-    msg =  req.get("queryResult").get("queryText")
+    #msg =  req.get("queryResult").get("queryText")
+    view =  req.get("queryResult").get("parameters").get("any")
     info = "查詢內容：" + msg
 
     db = firestore.client()
 
     collection_ref = db.collection("台中")
-    view = "舊山線八號隧道"
+    #view = "舊山線八號隧道"
     #view = input("景點 : ")  # 用於來讀取想要前往的景點名稱
     docs = collection_ref.get()
 
