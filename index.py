@@ -14,7 +14,7 @@ def webhook():
     #action =  req.get("queryResult").get("action")
     #msg =  req.get("queryResult").get("queryText")
     view =  req.get("queryResult").get("parameters").get("any")
-    info = "查詢內容：" + msg
+    info = "查詢內容：" + view
 
     db = firestore.client()
 
