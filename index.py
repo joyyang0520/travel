@@ -1,25 +1,32 @@
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials
+from firebase_admin import firestore
+
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
-db = firestore.client()
 
-from flask import Flask, request, make_response, jsonify
+from flask import Flask
 app = Flask(__name__)
-import openai
-import os
-#openai.api_key = os.getenv("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")
-@app.route("/webhook", methods=["POST"])
-def webhook():
-    # build a request object
-    req = request.get_json(force=True)
-    # fetch queryResult from json
-    action =  req.get("queryResult").get("action")
-    if (action == "cityChoice"):
-        city =  req.get("queryResult").get("parameters").get("city")
-        info = "您所選擇的旅遊地區是：" + city 
 
-    return make_response(jsonify({"fulfillmentText": info}))
+@app.route("/")
+def index():
+    db = firestore.client()
+
+    collection_ref = db.collection("台中")
+    view = "舊山線八號隧道"
+    #view = input("景點 : ")  # 用於來讀取想要前往的景點名稱
+    docs = collection_ref.get()
+
+    msg = ""
+    for doc in docs:
+        result = doc.to_dict()
+        if view in result.get("view"):
+            msg += "景點：" + result.get("view") + "<br>"
+            msg += "景點介紹：" + result.get("introduction") + "<br>"
+            msg += "地址：" + result.get("address") + "<br>"
+            msg += "開放時間：" + result.get("time") + "<br>"
+            msg += "票價：" + result.get("ticket") + "<br><br>"
+    return msg
 
 if __name__ == "__main__":
     app.run()
