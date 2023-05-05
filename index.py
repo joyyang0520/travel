@@ -5,11 +5,16 @@ from firebase_admin import firestore
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
-from flask import Flask
+from flask import Flask, request, make_response, jsonify
 app = Flask(__name__)
 
 @app.route("/")
 def index():
+    req = request.get_json(force=True)
+    #action =  req.get("queryResult").get("action")
+    msg =  req.get("queryResult").get("queryText")
+    info = "查詢內容：" + msg
+
     db = firestore.client()
 
     collection_ref = db.collection("台中")
@@ -26,7 +31,8 @@ def index():
             msg += "地址：" + result.get("address") + "<br>"
             msg += "開放時間：" + result.get("time") + "<br>"
             msg += "票價：" + result.get("ticket") + "<br><br>"
-    return msg
+    msg = info + "<br>" + msg
+    return make_response(jsonify({"fulfillmentText": msg}))
 
 if __name__ == "__main__":
     app.run()
