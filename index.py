@@ -2,8 +2,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-import openai
-openai.api_key = os.getenv("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")
+#import openai
+#openai.api_key = os.getenv("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")
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
@@ -14,7 +14,6 @@ app = Flask(__name__)
 @app.route("/webhook", methods=["POST"])
 def webhook():
     req = request.get_json(force=True)
-    
     #action =  req.get("queryResult").get("action")
     #msg =  req.get("queryResult").get("queryText")
     view =  req.get("queryResult").get("parameters").get("any")
