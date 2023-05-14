@@ -18,9 +18,7 @@ def webhook():
 
     db = firestore.client()
 
-    collection_ref = db.collection("台中")
-    #view = "舊山線八號隧道"
-    #view = input("景點 : ")  # 用於來讀取想要前往的景點名稱
+    collection_ref = db.collection("台北")
     docs = collection_ref.get()
 
     msg = ""
