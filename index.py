@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route("/webhook", methods=["POST"])
 def webhook():
     req = request.get_json(force=True)
-    """
+    
     #action =  req.get("queryResult").get("action")
     #msg =  req.get("queryResult").get("queryText")
     view =  req.get("queryResult").get("parameters").get("any")
@@ -37,8 +37,8 @@ def webhook():
 
     msg = info + "\n\n" + msg
 
-    """
     
+    '''
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt="靜宜大學資管系楊子青老師在獲獎方面？",
@@ -46,6 +46,7 @@ def webhook():
         temperature=0.5,
     )
     msg = response.choices[0].text
+    '''
 
     return make_response(jsonify({"fulfillmentText": msg}))
 
