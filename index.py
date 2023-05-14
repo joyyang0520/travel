@@ -20,7 +20,7 @@ def webhook():
 
     db = firestore.client()
 
-    collection_ref = db.collection("Travel")
+    collection_ref = db.collection("台北")
     docs = collection_ref.get()
 
     msg = ""
@@ -32,7 +32,7 @@ def webhook():
             msg += "地址：" + result.get("address") + "\n\n"
             msg += "開放時間：" + result.get("time") + "\n\n"
             msg += "票價：" + result.get("ticket") + "\n"
-            
+
     msg = info + "\n\n" + msg
 
     return make_response(jsonify({"fulfillmentText": msg}))
