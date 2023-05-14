@@ -7,7 +7,9 @@ from flask import Flask, request, make_response, jsonify
 app = Flask(__name__)
 @app.route("/webhook", methods=["POST"])
 def webhook():
+    '''
     req = request.get_json(force=True)
+    
     #action =  req.get("queryResult").get("action")
     #msg =  req.get("queryResult").get("queryText")
     view =  req.get("queryResult").get("parameters").get("any")
@@ -28,6 +30,16 @@ def webhook():
             msg += "開放時間：" + result.get("time") + "\n"
             msg += "票價：" + result.get("ticket") + "\n\n"
     msg = info + "\n" + msg
+    '''
+
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt="靜宜大學資管系楊子青老師在獲獎方面？",
+        max_tokens=500,
+        temperature=0.5,
+    )
+    msg = response.choices[0].text
+
     return make_response(jsonify({"fulfillmentText": msg}))
 if __name__ == "__main__":
     app.run()
