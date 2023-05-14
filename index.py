@@ -40,11 +40,12 @@ def webhook():
     """
     
     response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt="靜宜大學的風評如何？",
-            max_tokens=200,
-            temperature=0.5,)
-    msg = response["choices"][0]["text"].replace('。','。\n')
+        model="text-davinci-003",
+        prompt="靜宜大學資管系楊子青老師在獲獎方面？",
+        max_tokens=500,
+        temperature=0.5,
+    )
+    msg = response.choices[0].text
 
     return make_response(jsonify({"fulfillmentText": msg}))
 
