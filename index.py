@@ -2,8 +2,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-#import openai
-#openai.api_key = os.getenv("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")
+import openai
+openai.api_key = os.getenv("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")
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
@@ -14,6 +14,7 @@ app = Flask(__name__)
 @app.route("/webhook", methods=["POST"])
 def webhook():
     req = request.get_json(force=True)
+    """
     #action =  req.get("queryResult").get("action")
     #msg =  req.get("queryResult").get("queryText")
     view =  req.get("queryResult").get("parameters").get("any")
@@ -35,6 +36,16 @@ def webhook():
             msg += "票價：" + result.get("ticket") + "\n"
 
     msg = info + "\n\n" + msg
+
+    """
+    
+    response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt="靜宜大學的風評如何？",
+            max_tokens=200,
+            temperature=0.5,)
+    msg = response["choices"][0]["text"].replace('。','。\n')
+
     return make_response(jsonify({"fulfillmentText": msg}))
 
 if __name__ == "__main__":
