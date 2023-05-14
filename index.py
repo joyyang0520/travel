@@ -3,6 +3,8 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
+import openai
+openai.api_key = os.getenv("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")
 from flask import Flask, request, make_response, jsonify
 app = Flask(__name__)
 @app.route("/webhook", methods=["POST"])
