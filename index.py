@@ -18,7 +18,7 @@ def webhook():
 
     db = firestore.client()
 
-    collection_ref = db.collection("台北")
+    collection_ref = db.collection("台北","新北","新北","台南","高雄")
     docs = collection_ref.get()
 
     msg = ""
