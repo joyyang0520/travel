@@ -29,9 +29,6 @@ def a_hotel_details(URL):
 				hotel_info[x] = tr.find('td').text.replace(' ','').replace('\n','')
 			#print(tr.find('th').text.replace(' ','').replace('\n',''))
 			#print(tr.find('td').text.replace(' ','').replace('\n',''))
-
-		#print(tables_result)
-	#print(hotel_info)
 	
 	level = soup.find_all('i',class_='fa fa-star')
 	if len(level) != 0:
@@ -39,10 +36,6 @@ def a_hotel_details(URL):
 	else:
 		hotel_info['星級'] = '-'
 	
-	#print(len(level))
 	return(hotel_info)
-
-#URL = 'https://www.taiwanstay.net.tw/room/1934'
-#URL = 'https://www.taiwanstay.net.tw/room/1640'
-#URL = 'https://www.taiwanstay.net.tw/room/2414'	
+	
 #print(a_hotel_details(URL))
