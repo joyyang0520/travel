@@ -2,7 +2,6 @@ from hotel_info import a_hotel_details
 import requests
 from bs4 import BeautifulSoup
 
-
 def get_hotels_bycity(city):
 	_url = 'https://taiwanstay.net.tw'
 	#print('請輸入縣市: ',end='')
@@ -21,7 +20,7 @@ def get_hotels_bycity(city):
 		print(pages)
 
 	sum = 0
-	add_hotel = 0
+	hotel_count = 0
 	hotel_list = []
 	#info = ""
 	for i in range(0,int(pages),1):	
@@ -35,20 +34,42 @@ def get_hotels_bycity(city):
 			title = item.find('a').get('title')
 			web = item.find('a').get('href')
 			hotel_list.append(a_hotel_details(web))
-			#for k,v in hotel_list[add_hotel].items():
-				#print("{}:{}".format(k,v))
-			#print('\n')
+			for k,v in hotel_list[hotel_count].items():
+				print("{}:{}".format(k,v))
+			print('\n')
 			#hotel_dict[user_input].append({"旅宿名稱":title,"網址":web })
-			add_hotel += 1
+			hotel_count += 1
 		sum += 25
-	print(city + "總共" + str(add_hotel) + "筆資料")
-	return(hotel_list)
+	print(city + "總共" + str(hotel_count) + "筆資料")
+	return (hotel_list, hotel_count)
+	#total_count += hotel_count
 
-_taiwan_cities = ['臺北市', '新北市', '基隆市', '桃園市', '新竹縣', \
-                  '新竹市', '苗栗縣', '臺中市', '南投縣', '彰化縣', \
-                  '雲林縣', '嘉義縣', '嘉義市', '臺南市', '高雄市', \
-                  '屏東縣', '宜蘭縣', '花蓮縣', '臺東縣', '澎湖縣', \
-                  '金門縣', '連江縣']                 
+total_count = 0	
+
+_taiwan_cities = [#'臺北市', #'新北市', 
+                   '基隆市', #'桃園市', '新竹縣', \
+                  #'新竹市', '苗栗縣', '臺中市', '南投縣', '彰化縣', \
+                  #'雲林縣', '嘉義縣', '嘉義市', '臺南市', '高雄市', \
+                  #'屏東縣', '宜蘭縣', '花蓮縣', '臺東縣', '澎湖縣', \
+                  #'金門縣', '連江縣'
+                  ]                 
 get_all_hotels = {}
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+if not firebase_admin._apps:
+	cred = credentials.Certificate("hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json")
+	firebase_admin.initialize_app(cred)
+db = firestore.client()
+
 for city in _taiwan_cities:
-	get_all_hotels[city] = get_hotels_bycity(city)
+	info, count = get_hotels_bycity(city)
+	get_all_hotels[city] = info
+	total_count += count
+	ref = db.collection("全台灣旅宿")
+	db.collection("全台灣旅宿").document(city).set({"總旅宿":count})
+	for i in range(count):
+		ref.document(city + "-" + "旅宿編號" + str(i)).set(info[i])
+	db.close()
+print(total_count)
+	
