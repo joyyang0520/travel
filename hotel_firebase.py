@@ -6,7 +6,7 @@ if not firebase_admin._apps:
 	firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-_taiwan_cities = ['城市名稱']
+_taiwan_cities = ['基隆市']
 
 for _city in _taiwan_cities:
 	total_hotels = db.collection('全台灣旅宿').document(_city).get().to_dict()['總旅宿']
@@ -15,7 +15,15 @@ for _city in _taiwan_cities:
 		_doc_id = _city + '-' + '旅宿編號' + str(i)
 		_hotels_info = db.collection('全台灣旅宿').document(_doc_id).get().to_dict()
 		print('({}) {}'.format(i, _hotels_info))
+
+
 '''
+ref = db.collection("全台灣旅宿")
+db.collection("全台灣旅宿").document("城市名稱").set({"總旅宿":count})
+for i in range(count):
+	ref.document("城市名稱" + "-" + "旅宿編號" + str(i)).set(info[i])
+db.close()
+
 data = [{
 		"旅宿名稱":"台北美福大飯店",
 		"地址":"台北市中山區樂群二路55號",
