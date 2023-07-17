@@ -1,6 +1,8 @@
 from hotel_info import a_hotel_details
 import requests
 from bs4 import BeautifulSoup
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 def get_hotels_bycity(city):
 	_url = 'https://taiwanstay.net.tw'
@@ -51,10 +53,9 @@ _taiwan_cities = ['臺北市', '新北市', '基隆市', '桃園市', '新竹縣
                   '雲林縣', '嘉義縣', '嘉義市', '臺南市', '高雄市', \
                   '屏東縣', '宜蘭縣', '花蓮縣', '臺東縣', '澎湖縣', \
                   '金門縣', '連江縣'
-                  ]                 
+                  ]  
+                                 
 get_all_hotels = {}
-import firebase_admin
-from firebase_admin import credentials, firestore
 
 if not firebase_admin._apps:
 	cred = credentials.Certificate("hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json")

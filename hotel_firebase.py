@@ -6,17 +6,30 @@ if not firebase_admin._apps:
 	firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-_taiwan_cities = ['基隆市']
-
+_taiwan_cities = ['嘉義縣']
+hsin_chu_hotels = []
 for _city in _taiwan_cities:
 	total_hotels = db.collection('全台灣旅宿').document(_city).get().to_dict()['總旅宿']
 	print('{}, {}旅宿總數: {} '.format(type(total_hotels), _city, total_hotels))
 	for i in range(total_hotels):
 		_doc_id = _city + '-' + '旅宿編號' + str(i)
 		_hotels_info = db.collection('全台灣旅宿').document(_doc_id).get().to_dict()
-		print('({}) {}'.format(i, _hotels_info))
+		#print('({}) {}'.format(i, _hotels_info))
+		hsin_chu_hotels.append(_hotels_info)
 
+for i, hotel in enumerate(hsin_chu_hotels):
+    hsin_chu_hotels[i]["定價i"] = int(hotel["定價"].split('$')[1].split('-')[0])
+#print(hsin_chu_hotels)
 
+result = sorted(hsin_chu_hotels, key=lambda _dict: _dict["定價i"], reverse=False)
+#print(type(result))
+print("-----新竹市旅宿便宜到貴排序-----\n")
+for x in result:
+	for k,v in x.items():
+		if k == "旅宿名稱":
+			print(v)
+		elif k == "定價i":
+			print(v)
 '''
 ref = db.collection("全台灣旅宿")
 db.collection("全台灣旅宿").document("城市名稱").set({"總旅宿":count})
