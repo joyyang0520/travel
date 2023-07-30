@@ -1,6 +1,10 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 import time
+<<<<<<< HEAD
+
+=======
+>>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
 '''
 _taiwan_cities = ['臺北市', '新北市', '基隆市', '桃園市', '新竹縣', \
                   '新竹市', '苗栗縣', '臺中市', '南投縣', '彰化縣', \
@@ -8,6 +12,10 @@ _taiwan_cities = ['臺北市', '新北市', '基隆市', '桃園市', '新竹縣
                   '屏東縣', '宜蘭縣', '花蓮縣', '臺東縣', '澎湖縣', \
                   '金門縣', '連江縣']  
 '''
+<<<<<<< HEAD
+
+=======
+>>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
 #time_start = time.time()
 def get_hotels(_taiwan_cities):
 	if not firebase_admin._apps:

@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 Flask
 openai
 firebase_admin
+=======
+Flask
+openai
+firebase_admin
+>>>>>>> be6d529092dffa972030c81ba69e39bb407630f3

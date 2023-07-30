@@ -27,8 +27,11 @@ def a_hotel_details(URL):
 				hotel_info[x] = tr.find('td').text.replace(' ','').replace('\n','')
 			elif x == '定價':
 				hotel_info[x] = tr.find('td').text.replace(' ','').replace('\n','')
+<<<<<<< HEAD
+=======
 			#print(tr.find('th').text.replace(' ','').replace('\n',''))
 			#print(tr.find('td').text.replace(' ','').replace('\n',''))
+>>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
 	
 	level = soup.find_all('i',class_='fa fa-star')
 	if len(level) != 0:
