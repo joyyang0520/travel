@@ -3,7 +3,6 @@ from firebase_read import get_all_view, get_view_introducion
 from weather import get_weather_data
 import chatGPT
 from get_help import get_help
-<<<<<<< HEAD
 from read_hotel_CSV import get_city_hotel
 
 app = Flask(__name__)
@@ -12,16 +11,6 @@ app.config['request_city'] = ''
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-=======
-
-
-app = Flask(__name__)
-
-
-@app.route("/webhook", methods=["POST"])
-def webhook():
-
->>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
     req = request.get_json(force=True)
     # force=True
 
@@ -29,11 +18,8 @@ def webhook():
     action = req.get("queryResult").get("action")
     user_message = req.get("queryResult").get("queryText")
 
-<<<<<<< HEAD
     print(action)
 
-=======
->>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
     if (user_message == "help"):
         info = get_help()
 
@@ -43,10 +29,7 @@ def webhook():
         view = req.get("queryResult").get("parameters").get("any")
 
         info = get_view_introducion(view)
-<<<<<<< HEAD
 
-=======
->>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
         return make_response(jsonify({"fulfillmentText": info}))
 
     elif (action == "countyChoice"):
@@ -55,11 +38,9 @@ def webhook():
         info = get_all_view(area)
 
         return make_response(jsonify({"fulfillmentText": info}))
-<<<<<<< HEAD
     
     elif (action == "hotelintroduction"):
         hotel = req.get("queryResult").get("parameters").get("any")
-
         info = '旅宿'
 
         return make_response(jsonify({"fulfillmentText": info}))
@@ -83,9 +64,6 @@ def webhook():
 
         return make_response(jsonify({"fulfillmentText": info}))
     
-=======
-
->>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
     elif (action == "search_weather"):
         area = req.get("queryResult").get("parameters").get("county")
 
@@ -103,19 +81,12 @@ def webhook():
 
         info = "你好~~，有需要什麼幫助嗎?"
 
-<<<<<<< HEAD
         print('action: ' + action + 'info :' + info)
 
-=======
->>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
         return make_response(jsonify({"fulfillmentText": info}))
 
     # return make_response(jsonify({"fulfillmentText": info}))
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
- 
-=======
->>>>>>> be6d529092dffa972030c81ba69e39bb407630f3
     app.run()
