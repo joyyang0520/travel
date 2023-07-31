@@ -8,7 +8,7 @@ keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey_D
 cred = credentials.Certificate(keyFilePath)
 
 #cred = credentials.Certificate("serviceAccountKey.json")
-# cred = credentials.Certificate("serviceAccountKey_Dorncy.json")
+#cred = credentials.Certificate("serviceAccountKey_Dorncy.json")
 firebase_admin.initialize_app(cred)
 
 def get_all_view(area):

@@ -8,6 +8,7 @@ from read_hotel_CSV import get_city_hotel
 app = Flask(__name__)
 # 定義全局變數
 app.config['request_city'] = ''
+app.config['city_hotels'] = {} # {'基隆市':[...], '臺北市':[...], ...}
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
@@ -39,12 +40,6 @@ def webhook():
 
         return make_response(jsonify({"fulfillmentText": info}))
     
-    elif (action == "hotelintroduction"):
-        hotel = req.get("queryResult").get("parameters").get("any")
-        info = '旅宿'
-
-        return make_response(jsonify({"fulfillmentText": info}))
-    
     elif (action == "hotelcitychoice"):
         # request_city = req.get("queryResult").get("parameters").get("cities")
         app.config['request_city'] = req.get("queryResult").get("parameters").get("cities")
@@ -56,11 +51,20 @@ def webhook():
         # request_city = app.config['request_city']
         # print(request_city)
         # 原始字串
-        text = price
+        #text = price
         # 使用內建方法提取整數
-        extracted_integer = int(''.join(filter(str.isdigit, text)))
+        extracted_integer = int(''.join(filter(str.isdigit, price)))
 
-        info = get_city_hotel(app.config['request_city'], extracted_integer)
+        info, all_city_hotel = get_city_hotel(app.config['request_city'], extracted_integer)
+        app.config['city_hotels'].update(all_city_hotel)
+        #print(app.config['city_hotels'][app.config['request_city']])
+
+        return make_response(jsonify({"fulfillmentText": info}))
+    
+    elif (action == "hotelintroduction"):
+        hotel = req.get("queryResult").get("parameters").get("any")
+
+        info = hotel_details(hotel)
 
         return make_response(jsonify({"fulfillmentText": info}))
     
@@ -87,6 +91,22 @@ def webhook():
 
     # return make_response(jsonify({"fulfillmentText": info}))
 
+info = ''
+def hotel_details(hotel):
+    info = ''
+    city = app.config['request_city']
+    if city in app.config['city_hotels'].keys():
+        for h in app.config['city_hotels'][city]:
+            if hotel == h['旅宿名稱']:
+                info += '以下為' + h['旅宿名稱'] + '的詳細資料\n\n' 
+                info += '地址:' + h['地址'] + '\n\n'
+                info += '電話:' + h['電話'] + '\n\n'
+                info += '官方網站:' + h['官方網站'] + '\n\n'
+                info += '總房間數:' + h['總房間數'] + '\n\n'
+                info += '定價:' + h['定價'] + '\n\n'
+                info += '星級:' + h['星級'] + '\n'
+        print(info)
+    return info
 
 if __name__ == "__main__":
     app.run()
