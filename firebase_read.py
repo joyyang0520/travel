@@ -4,14 +4,17 @@ from firebase_admin import credentials, firestore
 # === 20230719 modified by peter ===
 from google.cloud.firestore_v1.base_query import FieldFilter
 import os
-keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey_Dorncy.json"
-cred = credentials.Certificate(keyFilePath)
+
 
 #cred = credentials.Certificate("serviceAccountKey.json")
 #cred = credentials.Certificate("serviceAccountKey_Dorncy.json")
-firebase_admin.initialize_app(cred)
+# firebase_admin.initialize_app(cred, name='get_view')
 
 def get_all_view(area):
+    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey_Dorncy.json"
+    cred = credentials.Certificate(keyFilePath)
+    firebase_admin.initialize_app(cred)
+
     db = firestore.client()
 
     collection_ref = db.collection(area)
@@ -22,6 +25,7 @@ def get_all_view(area):
         result = doc.to_dict()
         info += result.get("view") + "\n"
     info += "\n" + "想了解哪個景點?"
+    firebase_admin.delete_app(firebase_admin.get_app())
     return info
 
 # print(get_all_view("台中"))
@@ -77,6 +81,7 @@ def get_view_introducion(view):
             # info += "票價：" + result.get("ticket")
 
     # print(info)
+    firebase_admin.delete_app(firebase_admin.get_app())
     return info
     
 # get_view_introducion("高美濕地")
