@@ -2,18 +2,16 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # === 20230719 modified by peter ===
-from google.cloud.firestore_v1.base_query import FieldFilter
-import os
+# from google.cloud.firestore_v1.base_query import FieldFilter
+# import os
 
-
-#cred = credentials.Certificate("serviceAccountKey.json")
-#cred = credentials.Certificate("serviceAccountKey_Dorncy.json")
-# firebase_admin.initialize_app(cred, name='get_view')
+cred = credentials.Certificate("serviceAccountKey.json")
+firebase_admin.initialize_app(cred)
 
 def get_all_view(area):
-    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey_Dorncy.json"
-    cred = credentials.Certificate(keyFilePath)
-    firebase_admin.initialize_app(cred)
+    # keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey_Dorncy.json"
+    # cred = credentials.Certificate(keyFilePath)
+    # firebase_admin.initialize_app(cred)
 
     db = firestore.client()
 
@@ -53,21 +51,21 @@ def get_all_view(area):
 
 def get_view_introducion(view):
     db = firestore.client()
-    print("get_view_introducion")
+    #print("get_view_introducion")
     
     collection_names = [
        "台中", "苗栗", "彰化", "南投", "雲林", "台北", "新北", "基隆",
        "桃園", "新竹", "宜蘭", "高雄", "台南", "嘉義", "屏東", "花蓮", "台東"]
     info = ""
-
+    '''
     for collection_name in collection_names:
         collection_ref = db.collection(collection_name)
 
         # === 2023/7/20 modified by Peter ===
-        docs = collection_ref.where(filter=FieldFilter('view', '==', view))
+        # docs = collection_ref.where(filter=FieldFilter('view', '==', view))
 
-        #docs = collection_ref.where('view', '==', view)
-
+        docs = collection_ref.where('view', '==', view)
+    '''
     for collection_name in collection_names:
         collection_ref = db.collection(collection_name)
         docs = collection_ref.where('view', '==', view)
@@ -79,7 +77,6 @@ def get_view_introducion(view):
             info += "地址：" + result.get("address")
             # info += "開放時間：" + result.get("time") + "\n\n"
             # info += "票價：" + result.get("ticket")
-
     # print(info)
     firebase_admin.delete_app(firebase_admin.get_app())
     return info

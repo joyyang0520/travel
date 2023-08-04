@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 # from google.cloud.firestore_v1.base_query import FieldFilter
-import os
+# import os
 
 '''
 _taiwan_cities = ['臺北市', '新北市', '基隆市', '桃園市', '新竹縣', \
@@ -13,8 +13,11 @@ _taiwan_cities = ['臺北市', '新北市', '基隆市', '桃園市', '新竹縣
 '''
 
 def get_city_hotel(city_for_hotel, price):
-    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json"
-    cred = credentials.Certificate(keyFilePath)
+    # keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json"
+    # cred = credentials.Certificate(keyFilePath)
+    # firebase_admin.initialize_app(cred)
+
+    cred = credentials.Certificate('hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json')
     firebase_admin.initialize_app(cred)
 
     db = firestore.client()
