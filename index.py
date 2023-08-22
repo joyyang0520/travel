@@ -3,13 +3,12 @@ from firebase_read import get_all_view, get_view_introducion
 from weather import get_weather_data
 import chatGPT
 from get_help import get_help
-#from read_hotel_CSV import get_city_hotel
 from read_hotel_firebase import get_city_hotel
 
 app = Flask(__name__)
-# 定義全局變數
+
 app.config['request_city'] = ''
-app.config['city_hotels'] = {} # {'基隆市':[...], '臺北市':[...], ...}
+app.config['city_hotels'] = {}
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
@@ -42,30 +41,19 @@ def webhook():
         return make_response(jsonify({"fulfillmentText": info}))
     
     elif (action == "hotelcitychoice"):
-        # request_city = req.get("queryResult").get("parameters").get("cities")
         app.config['request_city'] = req.get("queryResult").get("parameters").get("cities")
         
         return make_response()
     
-    
-
     elif (action == "hotelprice"):
         price = req.get("queryResult").get("parameters").get("any")
-        # request_city = app.config['request_city']
-        # print(request_city)
-        # 原始字串
-        #text = price
-        # 使用內建方法提取整數
         extracted_integer = int(''.join(filter(str.isdigit, price)))
 
         if app.config['request_city'] in app.config['city_hotels'].keys():
-            print('step1')
             info = get_saved_city_hotel(app.config['request_city'], extracted_integer)
         else:
-            print('step2')
             info, all_city_hotel = get_city_hotel(app.config['request_city'], extracted_integer)
             app.config['city_hotels'].update(all_city_hotel)
-        #print(app.config['city_hotels'])
 
         return make_response(jsonify({"fulfillmentText": info}))
     
@@ -97,13 +85,12 @@ def webhook():
 
         return make_response(jsonify({"fulfillmentText": info}))
 
-    # return make_response(jsonify({"fulfillmentText": info}))
-
 def get_saved_city_hotel(city_for_hotel, price):
     info = ''
     city_for_hotel = app.config['request_city']
+
     if city_for_hotel in app.config['city_hotels'].keys():
-        max_index = search_hotel(app.config['city_hotels'][city_for_hotel], price)
+        max_index = search_hotel(app.config['city_hotels'][city_for_hotel], price)     
         if max_index == -1:
             print(f"找到數值於索引為：{max_index}")
             info = city_for_hotel + '無符合條件最低價格為' + str(price) + '元的飯店，請重新輸入更高的價格'
@@ -136,6 +123,7 @@ def search_hotel(list, price):
 def hotel_details(hotel):
     info = ''
     city = app.config['request_city'] 
+
     if city in app.config['city_hotels'].keys():
         for h in app.config['city_hotels'][city]:
             if hotel == h['旅宿名稱']:
@@ -146,7 +134,7 @@ def hotel_details(hotel):
                 info += '總房間數:' + h['總房間數'] + '\n\n'
                 info += '定價:' + h['定價'] + '\n\n'
                 info += '星級:' + h['星級'] + '\n'
-        #print(info)
+
     return info
 
 if __name__ == "__main__":
