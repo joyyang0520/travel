@@ -5,12 +5,12 @@ import os
 
 def get_all_view(area):
 
-    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey.json"
-    cred = credentials.Certificate(keyFilePath)
-    firebase_admin.initialize_app(cred)
-
-    # cred = credentials.Certificate("serviceAccountKey.json")
+    # keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey.json"
+    # cred = credentials.Certificate(keyFilePath)
     # firebase_admin.initialize_app(cred)
+
+    cred = credentials.Certificate("serviceAccountKey.json")
+    firebase_admin.initialize_app(cred)
 
     db = firestore.client()
 
@@ -52,12 +52,12 @@ def get_all_view(area):
 
 def get_view_introducion(view):
     
-    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey.json"
-    cred = credentials.Certificate(keyFilePath)
-    firebase_admin.initialize_app(cred)
-
-    # cred = credentials.Certificate("serviceAccountKey.json")
+    # keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey.json"
+    # cred = credentials.Certificate(keyFilePath)
     # firebase_admin.initialize_app(cred)
+
+    cred = credentials.Certificate("serviceAccountKey.json")
+    firebase_admin.initialize_app(cred)
     
     db = firestore.client()
     

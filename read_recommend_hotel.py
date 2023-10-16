@@ -4,15 +4,15 @@ import random
 
 def get_recommend_hotels(city):
     city = city + '推薦飯店'
-    # ===== while test on computer =====
-    from google.cloud.firestore_v1.base_query import FieldFilter
-    import os
-    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json"
-    cred = credentials.Certificate(keyFilePath)
-    firebase_admin.initialize_app(cred)
 
-    # cred = credentials.Certificate("hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json")
+    # from google.cloud.firestore_v1.base_query import FieldFilter
+    # import os
+    # keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json"
+    # cred = credentials.Certificate(keyFilePath)
     # firebase_admin.initialize_app(cred)
+
+    cred = credentials.Certificate("hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json")
+    firebase_admin.initialize_app(cred)
 
     db = firestore.client()
     doc_ref = db.collection(city)
