@@ -41,6 +41,7 @@ def get_hotels_bycity(city):
 			#print('\n')
 			#hotel_dict[user_input].append({"旅宿名稱":title,"網址":web })
 			hotel_count += 1
+		#print(hotel_list)
 		sum += 25
 	print(city + "總共" + str(hotel_count) + "筆資料")
 	return (hotel_list, hotel_count)
@@ -72,4 +73,22 @@ for city in _taiwan_cities:
 		ref.document(city + "-" + "旅宿編號" + str(i)).set(info[i])
 	db.close()
 print(total_count)
-	
+
+'''
+#========資料庫寫法版本=========
+V1 版本
+db.collection("全台灣旅宿").document(_city).set({'總旅宿' : len(_hotel_info)})
+for i in range(len(_hotel_info)):
+    db.collection("全台灣旅宿").document(_city + '-' + '旅宿編號' + str(i)).set(_hotel_info[i])
+
+V2 版本
+for i in range(len(_hotel_info)):
+    # document 由 firestore hash 產生
+    db.collection(_city).add(_hotel_info[i])
+db.close()
+'''
+'''	
+if __name__ == "__main__":
+	city = '基隆市'
+	get_hotels_bycity(city)
+'''

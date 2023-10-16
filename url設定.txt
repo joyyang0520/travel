@@ -1,6 +1,0 @@
-2Slxedf7BqEy7VgTxSwO40SK9J4_3YEguDWxbVBPRqJGwtrD5
-https://c158-42-72-121-25.ngrok-free.app/webhook
--->https://joychat.vercel.app/webhook
-https://travel-talk-ten.vercel.app/webhook
-https://travel.vercel.app/webhook
-

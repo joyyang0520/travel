@@ -4,11 +4,14 @@ from weather import get_weather_data
 import chatGPT
 from get_help import get_help
 from read_hotel_firebase import get_city_hotel
+from read_recommend_hotel import get_recommend_hotels
 
 app = Flask(__name__)
 
 app.config['request_city'] = ''
 app.config['city_hotels'] = {}
+app.config['R_request_city'] = ''
+app.config['R_city_hotels'] = {}
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
@@ -40,6 +43,65 @@ def webhook():
 
         return make_response(jsonify({"fulfillmentText": info}))
     
+    # -------------------------Recommend Hotel--------------------------- #
+    
+    elif (action == "Rcitychoice"):
+        city = req.get("queryResult").get("parameters").get("Rcities")
+        info, all_Rcity_hotels = get_recommend_hotels(city)
+        app.config['R_city_hotels'].update(all_Rcity_hotels)
+
+        # delete the blank of hotel's name
+        for i in range(len(app.config['R_city_hotels']['台中推薦飯店'])):
+            n = len(app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'])
+            if app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'][n-1] == " ":
+               app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'] = app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'][:n-1] 
+        #print(app.config['R_city_hotels'])
+
+        return make_response(jsonify({"fulfillmentText": info}))
+    
+    
+    elif (action == "Rhotelselect"): 
+        name = req.get("queryResult").get("parameters").get("any")
+        print(name) 
+
+        for hotel in app.config['R_city_hotels']['台中推薦飯店']:
+            if '飯店名稱' in hotel.keys() and hotel['飯店名稱'] == name:
+                #print(hotel)
+                app.config['single_hotel'] = hotel
+                print(app.config['single_hotel'])
+                break
+
+        return make_response()
+    
+    elif (action == "Rhotelservice"):
+        info = ''
+        info += '為您提供此飯店所提供的所有設施\n\n'
+        services = app.config['single_hotel']['熱門設施']
+        for service in services:
+            info += '-' + service + '\n'
+        info += '\n請問您還想知道甚麼呢?'
+        #print(info)
+        return make_response(jsonify({"fulfillmentText": info}))
+    
+    elif (action == "Rhotelroom"):
+        info = ''
+        info += '為您提供此飯店的所有房型\n\n'
+        rooms = app.config['single_hotel']['房型']
+        for room in rooms:
+            info += '-' + room + '\n'
+        info += '\n請問您還想知道甚麼呢?'
+        #print(info)
+        return make_response(jsonify({"fulfillmentText": info}))
+    
+    elif (action == "Rhotelweb"):
+        info = ''
+        web = app.config['single_hotel']['訂房網站']
+        info += web
+        #print(info)
+        return make_response(jsonify({"fulfillmentText": info}))
+    
+    # ----------------------------Query Hotel--------------------------- #
+    
     elif (action == "hotelcitychoice"):
         app.config['request_city'] = req.get("queryResult").get("parameters").get("cities")
         
@@ -47,13 +109,15 @@ def webhook():
     
     elif (action == "hotelprice"):
         price = req.get("queryResult").get("parameters").get("any")
-        extracted_integer = int(''.join(filter(str.isdigit, price)))
-
+        print(f"price string : {price}")
+        extracted_integer = int(''.join(filter(str.isdigit, price))) #??
+        print(extracted_integer)
+    
         if app.config['request_city'] in app.config['city_hotels'].keys():
             info = get_saved_city_hotel(app.config['request_city'], extracted_integer)
         else:
-            info, all_city_hotel = get_city_hotel(app.config['request_city'], extracted_integer)
-            app.config['city_hotels'].update(all_city_hotel)
+            info, all_city_hotels = get_city_hotel(app.config['request_city'], extracted_integer)
+            app.config['city_hotels'].update(all_city_hotels)
 
         return make_response(jsonify({"fulfillmentText": info}))
     

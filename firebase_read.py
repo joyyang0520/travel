@@ -1,10 +1,16 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
+from google.cloud.firestore_v1.base_query import FieldFilter
+import os
 
 def get_all_view(area):
 
-    cred = credentials.Certificate("serviceAccountKey.json")
+    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey.json"
+    cred = credentials.Certificate(keyFilePath)
     firebase_admin.initialize_app(cred)
+
+    # cred = credentials.Certificate("serviceAccountKey.json")
+    # firebase_admin.initialize_app(cred)
 
     db = firestore.client()
 
@@ -45,9 +51,13 @@ def get_all_view(area):
 # # get_view_introducion("台中", "高美濕地")
 
 def get_view_introducion(view):
-
-    cred = credentials.Certificate("serviceAccountKey.json")
+    
+    keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/serviceAccountKey.json"
+    cred = credentials.Certificate(keyFilePath)
     firebase_admin.initialize_app(cred)
+
+    # cred = credentials.Certificate("serviceAccountKey.json")
+    # firebase_admin.initialize_app(cred)
     
     db = firestore.client()
     
