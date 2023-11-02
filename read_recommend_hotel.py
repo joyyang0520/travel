@@ -1,12 +1,11 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 import random
+from google.cloud.firestore_v1.base_query import FieldFilter
+import os
 
 def get_recommend_hotels(city):
-    city = city + '推薦飯店'
 
-    # from google.cloud.firestore_v1.base_query import FieldFilter
-    # import os
     # keyFilePath = os.path.abspath(os.path.dirname(__file__)) + "/hotel-1a77a-firebase-adminsdk-bnri1-fd5cb200db.json"
     # cred = credentials.Certificate(keyFilePath)
     # firebase_admin.initialize_app(cred)
@@ -30,8 +29,10 @@ def get_recommend_hotels(city):
     #print(hotel_dict)
 
     num_choices = 3
+    #num_choices = min(num_choices, len(hotel_info_list))
     random_hotels = random.sample(hotel_info_list, num_choices)
-    
+    #print(hotel_info_list)
+
     for hotel in random_hotels:
         hotel_name = hotel['飯店名稱']
         hotel_score = hotel['評分']    
@@ -42,21 +43,10 @@ def get_recommend_hotels(city):
     info += '請問您對哪家有興趣呢，以便為您提供更詳細的資訊'
     firebase_admin.delete_app(firebase_admin.get_app())
     return info, hotel_dict
-'''
+
+''' 
 if __name__ == "__main__":
-    city = '台中'
-    get_recommend_hotels(city)
-
-hotel_indices = list(range(len(hotel_info_list)))
-random.shuffle(hotel_indices)
-
-for i in range(3):
-    #當所有飯店都被選擇過之後，會全部reset
-    if not hotel_indices:
-        hotel_indices = list(range(len(hotel_info_list)))
-        random.shuffle(hotel_indices)
-    
-    random_index = hotel_indices.pop()
-    selected_hotel = hotel_info_list[random_index]
-    print(selected_hotel)
+    cities = ['台中','基隆','彰化','屏東','新竹市','苗栗','南投','雲林','嘉義縣','嘉義市','屏東','宜蘭','花蓮','台東','台北','新北','台南','高雄','新竹縣']
+    for city in cities:   
+        get_recommend_hotels(city)
 '''

@@ -5,6 +5,8 @@ import chatGPT
 from get_help import get_help
 from read_hotel_firebase import get_city_hotel
 from read_recommend_hotel import get_recommend_hotels
+import re
+import random
 
 app = Flask(__name__)
 
@@ -12,6 +14,13 @@ app.config['request_city'] = ''
 app.config['city_hotels'] = {}
 app.config['R_request_city'] = ''
 app.config['R_city_hotels'] = {}
+app.config['checkin'] = ''
+app.config['checkout'] = ''
+app.config['adults'] = ''
+app.config['children'] = ''
+app.config['children_age'] = ''
+app.config['room_need'] = ''
+app.config['age_list'] = []
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
@@ -47,59 +56,126 @@ def webhook():
     
     elif (action == "Rcitychoice"):
         city = req.get("queryResult").get("parameters").get("Rcities")
-        info, all_Rcity_hotels = get_recommend_hotels(city)
-        app.config['R_city_hotels'].update(all_Rcity_hotels)
+        city = city + '推薦飯店'
 
-        # delete the blank of hotel's name
-        for i in range(len(app.config['R_city_hotels']['台中推薦飯店'])):
-            n = len(app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'])
-            if app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'][n-1] == " ":
-               app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'] = app.config['R_city_hotels']['台中推薦飯店'][i]['飯店名稱'][:n-1] 
-        #print(app.config['R_city_hotels'])
+        if city in app.config['R_city_hotels'].keys():
+            info = get_saved_Rcity_hotel(city)
+        else:
+            info, all_Rcity_hotels = get_recommend_hotels(city)
+            app.config['R_city_hotels'].update(all_Rcity_hotels)
+
+            # delete the blank of hotel's name
+            for i in range(len(app.config['R_city_hotels'][city])):
+                n = len(app.config['R_city_hotels'][city][i]['飯店名稱'])
+                if app.config['R_city_hotels'][city][i]['飯店名稱'][n-1] == " ":
+                    app.config['R_city_hotels'][city][i]['飯店名稱'] = app.config['R_city_hotels'][city][i]['飯店名稱'][:n-1] 
+            
+        app.config['R_request_city'] = city
 
         return make_response(jsonify({"fulfillmentText": info}))
     
-    
     elif (action == "Rhotelselect"): 
         name = req.get("queryResult").get("parameters").get("any")
-        print(name) 
 
-        for hotel in app.config['R_city_hotels']['台中推薦飯店']:
+        for hotel in app.config['R_city_hotels'][app.config['R_request_city']]:
             if '飯店名稱' in hotel.keys() and hotel['飯店名稱'] == name:
-                #print(hotel)
                 app.config['single_hotel'] = hotel
-                print(app.config['single_hotel'])
+                #print(app.config['single_hotel'])
                 break
 
         return make_response()
     
     elif (action == "Rhotelservice"):
         info = ''
-        info += '為您提供此飯店所提供的所有設施\n\n'
+        info += '為您提供此飯店所提供的設施服務\n\n'
         services = app.config['single_hotel']['熱門設施']
+
         for service in services:
             info += '-' + service + '\n'
-        info += '\n請問您還想知道甚麼呢?'
         #print(info)
+
         return make_response(jsonify({"fulfillmentText": info}))
     
     elif (action == "Rhotelroom"):
         info = ''
-        info += '為您提供此飯店的所有房型\n\n'
+        info += '為您提供此飯店的所有房型和床型\n\n'
         rooms = app.config['single_hotel']['房型']
+        
         for room in rooms:
             info += '-' + room + '\n'
-        info += '\n請問您還想知道甚麼呢?'
         #print(info)
+
+        return make_response(jsonify({"fulfillmentText": info}))
+    
+    elif (action == "checkin_time"):
+        info = ''
+        info += app.config['single_hotel']['入住時間']
+
+        return make_response(jsonify({"fulfillmentText": info}))
+    
+    elif (action == "checkout_time"):
+        info = ''
+        info += app.config['single_hotel']['退房時間']
+
         return make_response(jsonify({"fulfillmentText": info}))
     
     elif (action == "Rhotelweb"):
+    
+        return make_response()
+
+    elif (action == "checkin_checkout"):
+        app.config['checkin'] = req.get("queryResult").get("parameters").get("any")
+        app.config['checkout'] = req.get("queryResult").get("parameters").get("any1")
+        app.config['checkin'] = app.config['checkin'].replace(' ','')
+        app.config['checkout'] = app.config['checkout'].replace(' ','')
+        #print(app.config['checkin'])
+        #print(app.config['checkout'])
+        return make_response()
+    
+    elif (action == "peoplecount"):
+        info = ''
+        info += '請問需要幾間房間呢?'
+        app.config['adults'] = req.get("queryResult").get("parameters").get("any")
+        app.config['children'] = req.get("queryResult").get("parameters").get("any1")
+        #print(app.config['adults'])
+        #print( app.config['children'])
+
+        if app.config['children'] != '0':
+            return make_response()
+        else:
+            return make_response(jsonify({"fulfillmentText": info}))
+        
+    elif (action == "children_age"):
+        app.config['children_age'] = req.get("queryResult").get("parameters").get("any")
+        #print(app.config['children_age'])
+        
+        #將字串中的數字提取出來轉換成整數存入list
+        app.config['age_list'] = re.findall(r'\d+', app.config['children_age'])
+        app.config['age_list'] = [age for age in app.config['age_list']]
+        #print(app.config['age_list'])
+
+        return make_response()
+       
+    elif (action == "room_need"):
+        app.config['room_need'] = req.get("queryResult").get("parameters").get("any")
+        #print(app.config['room_need'])
         info = ''
         web = app.config['single_hotel']['訂房網站']
-        info += web
-        #print(info)
+
+        if app.config['children'] == '0':
+            info += web + '?checkin=' + app.config['checkin'] + '&checkout=' + app.config['checkout']\
+                        + '&group_adults=' + app.config['adults'] + '&req_adults=' + app.config['adults'] + '&no_rooms=' + app.config['room_need']
+            #print(info)
+        else:
+            info += web + '?checkin=' + app.config['checkin'] + '&checkout=' + app.config['checkout'] \
+                        + '&group_adults=' + app.config['adults'] + '&req_adults=' + app.config['adults']\
+                        + '&no_rooms=' + app.config['room_need'] + '&group_children=' + app.config['children'] + '&req_children=' + app.config['children']
+            for i in app.config['age_list']:
+                info += '&age=' + str(i) + '&req_age=' + str(i)
+            #print(info)
+            
         return make_response(jsonify({"fulfillmentText": info}))
-    
+
     # ----------------------------Query Hotel--------------------------- #
     
     elif (action == "hotelcitychoice"):
@@ -165,6 +241,25 @@ def get_saved_city_hotel(city_for_hotel, price):
                 info += app.config['city_hotels'][city_for_hotel][i]['旅宿名稱'] + "\n" 
             info += '\n請問需要哪間飯店的詳細資訊?'
 
+    return info
+
+def get_saved_Rcity_hotel(city):
+    info = ''
+    info += '以下為您推薦三間訂房網站上評價非常好的飯店!' + '\n\n'
+
+    num_choices = 3
+    #num_choices = min(num_choices, len(hotel_info_list))
+    random_hotels = random.sample(app.config['R_city_hotels'][city], num_choices)
+    #print(hotel_info_list)
+
+    for hotel in random_hotels:
+        hotel_name = hotel['飯店名稱']
+        hotel_score = hotel['評分']    
+        info += hotel_name + '\n'
+        info += '評分:' + hotel_score + '\n\n'
+    #print(info)
+    #print(random_hotels)
+    info += '請問您對哪家有興趣呢，以便為您提供更詳細的資訊'
     return info
 
 def search_hotel(list, price):
