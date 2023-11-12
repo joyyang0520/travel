@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, make_response, jsonify
-from firebase_read import get_all_view, get_view_introducion
+from firebase_read import get_all_view
 from weather import get_weather_data
 import chatGPT
 from get_help import get_help
@@ -10,6 +10,8 @@ import random
 
 app = Flask(__name__)
 
+app.config['all_area_view'] = {}
+app.config['request_area'] = ''
 app.config['request_city'] = ''
 app.config['city_hotels'] = {}
 app.config['R_request_city'] = ''
@@ -38,25 +40,41 @@ def webhook():
 
         return make_response(jsonify({"fulfillmentText": info}))
 # --------------------------------------------------------------------------- #
-    if (action == "viewintroduction"):
-        view = req.get("queryResult").get("parameters").get("any")
-
-        info = get_view_introducion(view)
-
-        return make_response(jsonify({"fulfillmentText": info}))
-
-    elif (action == "countyChoice"):
+    if (action == "countyChoice"):
         area = req.get("queryResult").get("parameters").get("county")
 
-        info = get_all_view(area)
+        if area in app.config['all_area_view'].keys():
+            info = get_saved_area_view(area)
+        else:
+            info, all_area_views = get_all_view(area)
+            app.config['all_area_view'].update(all_area_views)
+        #print(app.config['all_area_view'])
+        app.config['request_area'] = area
 
         return make_response(jsonify({"fulfillmentText": info}))
     
+    elif (action == "viewintroduction"):
+        view = req.get("queryResult").get("parameters").get("any")
+        info = ''
+        for area in app.config['all_area_view'][app.config['request_area']]:
+            if 'view' in area.keys() and area['view'] == view:
+                info += "景點：" + area['view'] + "\n\n"
+                info += "景點介紹：" + area['introduction'] + "\n\n"
+                info += "地址：" + area['address'] + "\n\n"
+                info += "更多資訊：" + area['link']
+                break
+        print(info)
+
+        #info = get_view_introducion(view)
+
+        return make_response(jsonify({"fulfillmentText": info}))
+
     # -------------------------Recommend Hotel--------------------------- #
     
     elif (action == "Rcitychoice"):
         city = req.get("queryResult").get("parameters").get("Rcities")
         city = city + '推薦飯店'
+        print(city)
 
         if city in app.config['R_city_hotels'].keys():
             info = get_saved_Rcity_hotel(city)
@@ -87,7 +105,7 @@ def webhook():
     
     elif (action == "Rhotelservice"):
         info = ''
-        info += '為您提供此飯店所提供的設施服務\n\n'
+        info += '為您提供此飯店所提供的熱門設施服務:\n\n'
         services = app.config['single_hotel']['熱門設施']
 
         for service in services:
@@ -98,7 +116,7 @@ def webhook():
     
     elif (action == "Rhotelroom"):
         info = ''
-        info += '為您提供此飯店的所有房型和床型\n\n'
+        info += '為您提供此飯店的所有房型和床型:\n\n'
         rooms = app.config['single_hotel']['房型']
         
         for room in rooms:
@@ -177,33 +195,33 @@ def webhook():
         return make_response(jsonify({"fulfillmentText": info}))
 
     # ----------------------------Query Hotel--------------------------- #
-    
-    elif (action == "hotelcitychoice"):
-        app.config['request_city'] = req.get("queryResult").get("parameters").get("cities")
+   
+    # elif (action == "hotelcitychoice"):
+    #     app.config['request_city'] = req.get("queryResult").get("parameters").get("cities")
         
-        return make_response()
+    #     return make_response()
     
-    elif (action == "hotelprice"):
-        price = req.get("queryResult").get("parameters").get("any")
-        print(f"price string : {price}")
-        extracted_integer = int(''.join(filter(str.isdigit, price))) #??
-        print(extracted_integer)
+    # elif (action == "hotelprice"):
+    #     price = req.get("queryResult").get("parameters").get("any")
+    #     print(f"price string : {price}")
+    #     extracted_integer = int(''.join(filter(str.isdigit, price))) #??
+    #     print(extracted_integer)
     
-        if app.config['request_city'] in app.config['city_hotels'].keys():
-            info = get_saved_city_hotel(app.config['request_city'], extracted_integer)
-        else:
-            info, all_city_hotels = get_city_hotel(app.config['request_city'], extracted_integer)
-            app.config['city_hotels'].update(all_city_hotels)
+    #     if app.config['request_city'] in app.config['city_hotels'].keys():
+    #         info = get_saved_city_hotel(app.config['request_city'], extracted_integer)
+    #     else:
+    #         info, all_city_hotels = get_city_hotel(app.config['request_city'], extracted_integer)
+    #         app.config['city_hotels'].update(all_city_hotels)
 
-        return make_response(jsonify({"fulfillmentText": info}))
+    #     return make_response(jsonify({"fulfillmentText": info}))
     
-    elif (action == "hotelintroduction"):
-        hotel = req.get("queryResult").get("parameters").get("any")
+    # elif (action == "hotelintroduction"):
+    #     hotel = req.get("queryResult").get("parameters").get("any")
 
-        info = hotel_details(hotel)
+    #     info = hotel_details(hotel)
 
-        return make_response(jsonify({"fulfillmentText": info}))
-    
+    #     return make_response(jsonify({"fulfillmentText": info}))
+        
     elif (action == "search_weather"):
         area = req.get("queryResult").get("parameters").get("county")
 
@@ -219,12 +237,15 @@ def webhook():
     
     elif (action == "input.welcome"):
 
-        info = "你好~~，有需要什麼幫助嗎?"
+        info = "您好~~\n我是旅遊推薦機器人^^\n"
+        info += "以下為我能夠為您提供的服務:\n"
+        info += "1.推薦景點--請輸入推薦景點\n2.推薦飯店--請輸入推薦飯店\n3.縣市天氣查詢--請輸入縣市+天氣"
 
         print('action: ' + action + 'info :' + info)
 
         return make_response(jsonify({"fulfillmentText": info}))
 
+'''
 def get_saved_city_hotel(city_for_hotel, price):
     info = ''
     city_for_hotel = app.config['request_city']
@@ -241,6 +262,17 @@ def get_saved_city_hotel(city_for_hotel, price):
                 info += app.config['city_hotels'][city_for_hotel][i]['旅宿名稱'] + "\n" 
             info += '\n請問需要哪間飯店的詳細資訊?'
 
+    return info
+'''
+
+def get_saved_area_view(area):
+    info = "以下是" + area + "推薦的著名景點:\n\n"
+    num_choices = 5
+    random_views = random.sample(app.config['all_area_view'][area], num_choices)
+
+    for view in random_views:  
+        info += view['view'] + '\n'
+    info += "\n" + "想了解哪個景點?"
     return info
 
 def get_saved_Rcity_hotel(city):
@@ -261,7 +293,7 @@ def get_saved_Rcity_hotel(city):
     #print(random_hotels)
     info += '請問您對哪家有興趣呢，以便為您提供更詳細的資訊'
     return info
-
+'''
 def search_hotel(list, price):
     low = 0
     upper = len(list) - 1
@@ -295,6 +327,6 @@ def hotel_details(hotel):
                 info += '星級:' + h['星級'] + '\n'
 
     return info
-
+'''
 if __name__ == "__main__":
     app.run()
