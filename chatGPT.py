@@ -5,7 +5,11 @@ b_side = "lbkFJo6pnsChgFziv0QeUjLGm"
 openai.api_key = a_side + b_side
 
 def reply(msg):
-    
+
+    remsg = 'chatGPT reply'
+
+    return remsg
+    '''
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         max_tokens=60,
@@ -19,11 +23,6 @@ def reply(msg):
     
     if '。' or '.' in remsg:
         remsg = remsg.split('。')[0] 
-        
-    print(remsg)
     
     return remsg
-'''
-if __name__ == "__main__":
-    reply("台灣哪裡有熱氣球")
 '''
