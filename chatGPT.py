@@ -17,9 +17,9 @@ def reply(msg):
     )
     remsg = response.choices[0].message.content
     
-    if '。' or '.' in remsg:
-        
-        remsg = remsg.split('。')[0] 
-    
-    return remsg
+    if '。' in remsg or '.' in remsg:
+        remsg = remsg.split('。')[0]
 
+    #print(remsg)
+
+    return remsg

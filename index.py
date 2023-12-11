@@ -33,7 +33,7 @@ def webhook():
     action = req.get("queryResult").get("action")
     user_message = req.get("queryResult").get("queryText")
 
-    #print(action)
+    print(action)
 
     if (user_message == "help"):
         info = get_help()
@@ -63,7 +63,7 @@ def webhook():
                 info += "地址：" + area['address'] + "\n\n"
                 info += "更多資訊：" + area['link']
                 break
-        #print(info)
+        print(info)
 
         #info = get_view_introducion(view)
 
@@ -74,7 +74,7 @@ def webhook():
     elif (action == "Rcitychoice"):
         city = req.get("queryResult").get("parameters").get("Rcities")
         city = city + '推薦飯店'
-        #print(city)
+        print(city)
 
         if city in app.config['R_city_hotels'].keys():
             info = get_saved_Rcity_hotel(city)
@@ -241,7 +241,7 @@ def webhook():
         info += "以下為我能夠為您提供的服務:\n"
         info += "1.推薦景點--請輸入推薦景點\n2.推薦飯店--請輸入推薦飯店\n3.縣市天氣查詢--請輸入縣市+天氣"
 
-        #print('action: ' + action + 'info :' + info)
+        print('action: ' + action + 'info :' + info)
 
         return make_response(jsonify({"fulfillmentText": info}))
 
@@ -330,4 +330,3 @@ def hotel_details(hotel):
 '''
 if __name__ == "__main__":
     app.run()
-
