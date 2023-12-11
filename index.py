@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, make_response, jsonify
+from waitress import serve
 from firebase_read import get_all_view
 from weather import get_weather_data
 import chatGPT
@@ -330,3 +331,4 @@ def hotel_details(hotel):
 '''
 if __name__ == "__main__":
     app.run()
+    #serve(app, host='0.0.0.0', port=8080)
